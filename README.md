@@ -15,8 +15,8 @@ jeśli dane są w formacie imzml, to być może **imzml_to_numpy.py** pomoże.
 4. Obliczenia:  
     a. uruchomić **original_kmeans.py**, aby policzyć klastry na spektrach.  
     b. uruchomić trening sieci**.  
-    bb. uruchomić contrastive_kmeans.py, aby policzyć klastry na reprezentacjach spektr.  
-5. uruchomić evaluate.py aby policzyć wyniki, narysować obrazki.  
+    bb. uruchomić **contrastive_kmeans.py**, aby policzyć klastry na reprezentacjach spektr.  
+5. uruchomić **evaluate.py** aby policzyć wyniki, narysować obrazki.  
 
 ** kod do treningu sieci jest na google colab: https://drive.google.com/drive/u/1/folders/1C04FcG6QzxF6dE5n4qTk0ArI1-b8Cn3H
 ___
