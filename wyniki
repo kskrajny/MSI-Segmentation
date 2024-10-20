@@ -1,0 +1,20 @@
+Pamięć przed (GB); Pamięć po (dim=128) (MB); Encoding Kmeans ACC; czas (min) na Tesla T4 (15GB)
+
+Pacjent H: 1,8; 2,7; 0.6153; 18
+Pacjent J: 2,4; 3,5; 0.7339; 24
+Pacjent L: 3,1; 4,5; 0.6479; 30
+Pacjent O: 2,9; 4,2; 0.699; 29
+Pacjent P: 3,0; 4,4; 0.69; 30
+Pacjnet T: 1,6; 2,4; 0.5638; 16
+
+
+-Iterative jest taki sam jak Kmeans, bo mamy dwa targety
+
+
+3 klasy; ACC; Shape przed i po obcięciu; klasy po obcięciu
+Pacjent H: 0.4486; (5241,) (2635,); 1157,   26, 1452
+Pacjent J: 0.5017; (6895,) (2687,); 1913,  246,  528
+Pacjent L: 0.6141; (8812,) (4685,); 3246,  484,  955
+Pacjent O: 0.6083; (8203,) (5007,); 3704,  300, 1003
+Pacjent P: 0.3421; (8557,) (3008,); 2100,  580,  328
+Pacjnet T: 0.2934; (4665,) (2301,); 1751,  350,  200

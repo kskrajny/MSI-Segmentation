@@ -82,3 +82,15 @@ def get_conv_img(img):
             counts = np.bincount(vals)
             new_img[i, j] = np.argmax(counts)
     return new_img
+
+
+def max_euclidean_distance(samples):
+    n_samples = samples.shape[0]
+    max_dist = 0
+
+    for i in range(n_samples):
+        for j in range(i + 1, n_samples):
+            dist = np.linalg.norm(samples[i] - samples[j])
+            max_dist = max(max_dist, dist)
+
+    return max_dist

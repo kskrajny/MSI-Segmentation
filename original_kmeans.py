@@ -1,4 +1,5 @@
 import os
+import time
 from argparse import Namespace
 from pathlib import Path
 import numpy as np
@@ -10,7 +11,7 @@ from pyspark.ml.linalg import DenseVector, VectorUDT
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf, col
 
-
+start = time.time()
 # ------------------------ VARIABLES TO SET  ------------------------ #
 # - path_to_data
 # - parquet_name
@@ -18,13 +19,13 @@ from pyspark.sql.functions import udf, col
 # - max_cluster
 # - n_components
 
-path_to_data = "dane/pecherz/"
+path_to_data = "dane/nowe/"
 parquet_name = 'parquet_convolve_True'
 
-output_folder = 'results/pecherz_original_conv/'
+# output_folder = 'results/pecherz_original_conv/'
 # output_folder = 'results/pecherz_original/'
-max_clusters = 32
-n_components = 8
+# max_clusters = 32
+# n_components = 8
 
 # output_folder = 'results/sztuczne_dane_original_conv/'
 # output_folder = 'results/sztuczne_dane_original/'
@@ -35,6 +36,12 @@ n_components = 8
 # output_folder = 'results/watroba_original/'
 # max_clusters = 3
 # n_components = 3
+
+# output_folder = "results/nowe_dane_original_conv/"
+output_folder = "results/nowe_dane_original/"
+max_clusters = 3
+n_components = 3
+
 # ------------------------------------------------------------------- #
 
 
@@ -48,11 +55,15 @@ except:
 spark = SparkSession.builder \
     .master("local") \
     .appName("Magisterka") \
-    .config("spark.driver.memory", "50g") \
-    .config("spark.driver.maxResultSize", "0") \
+    .config("spark.sql.shuffle.partitions", "200") \
+    .config("spark.storage.memoryFraction", "0.8") \
+    .config("spark.memory.fraction", "0.8") \
+    .config("spark.driver.memory", "30g") \
+    .config("spark.executor.memory", "30g") \
+    .config("spark.driver.maxResultSize", "2g") \
     .getOrCreate()
 spark.conf.set(SparkDatasetConverter.PARENT_CACHE_DIR_URL_CONF, Path('.').absolute().as_uri())
-df = spark.read.parquet(path_to_data + parquet_name).sort('pos')
+df = spark.read.parquet(path_to_data + parquet_name).repartition(50).persist().sort('pos')
 converted_data = make_spark_converter(df)
 
 
@@ -63,7 +74,7 @@ model = pca.fit(df)
 df = model.transform(df)
 df = df.drop('features')
 
-
+kmeans_start = time.time()
 # NORMAL CLUSTERING
 kmeans = KMeans(k=max_clusters, featuresCol='pca_features')
 model = kmeans.fit(df)
@@ -72,10 +83,11 @@ predictions = np.array(df.select('prediction').collect())
 np.save(output_folder + 'Normal_K-Means', predictions)
 df = df.drop('prediction')
 
-
+break1 = time.time()
+print(f'KMEANS TIME: {break1 - start}')
 # ITERATIVE CLUSTERING
 # max_clusters = 8
-
+'''
 clusters = 1
 clusters_arr = [1]
 i = 0
@@ -111,9 +123,9 @@ vecAssembler = VectorAssembler(outputCol='prediction')
 vecAssembler.setInputCols([f'prediction{j}' for j in range(len(clusters_arr) - 1)])
 df = vecAssembler.transform(df)
 
-
+print(f'Iterative TIME: {time.time() - break1 + (kmeans_start - start)}')
 # SAVE LABELS
 predictions = np.squeeze(np.array(df.select('prediction').collect()))
 np.save(output_folder + 'Iterative_K-Means', predictions)
-
+'''
 spark.stop()

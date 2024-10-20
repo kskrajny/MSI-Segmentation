@@ -54,26 +54,31 @@ class ContrastiveLoss(nn.Module):
         super().__init__()
         self.batch_size = batch_size
         self.register_buffer("temperature", torch.tensor(temperature).to(device))
-        # noinspection PyTypeChecker
-        self.register_buffer("negatives_mask",
-                             (~torch.eye(batch_size * 2, batch_size * 2, dtype=bool).to(device)).float())
+        self.register_buffer("negatives_mask", (~torch.eye(batch_size * 2, batch_size * 2, dtype=bool).to(device)).float())
 
-    def forward(self, emb_i, emb_j):
+    def forward(self, emb_i, emb_j, encoder_inputs, decoder_outputs):
+        # Contrastive Loss
         representations = torch.cat([emb_i, emb_j], dim=0)
-
         similarity_matrix = F.cosine_similarity(representations.unsqueeze(1), representations.unsqueeze(0), dim=2)
-
         sim_ij = torch.diag(similarity_matrix, self.batch_size)
         sim_ji = torch.diag(similarity_matrix, -self.batch_size)
-
         positives = torch.cat([sim_ij, sim_ji], dim=0)
-
         nominator = torch.exp(positives / self.temperature)
         denominator = self.negatives_mask * torch.exp(similarity_matrix / self.temperature)
-
         loss_partial = -torch.log(nominator / torch.sum(denominator, dim=1))
-        loss = torch.sum(loss_partial) / (2 * self.batch_size)
-        return loss
+        contrastive_loss = torch.sum(loss_partial) / (2 * self.batch_size)
+
+        # Mean & Std Loss
+        std_loss = torch.mean(torch.std(representations, dim=0))
+        mean_loss = torch.mean(torch.mean(representations, dim=1) ** 2)
+
+        # MSE Loss
+        mse_loss = torch.mean((encoder_inputs - decoder_outputs) ** 2)
+
+        # Combine the losses
+        total_loss = contrastive_loss + std_loss + mean_loss + mse_loss
+
+        return total_loss
 
 
 # 2.3) SimCLR model
@@ -113,7 +118,6 @@ def train_clr(model, criterion, optimizer, dataloader, batch_step):
         losses.append(loss.detach().cpu().numpy())
         i += 1
     return sum(losses)
-
 
 def fit_clr(hparams_CLR, output_folder, dataloader):
     model_CLR, criterion_CLR, optimizer_CLR, scheduler_CLR = get_clr_training_components(hparams_CLR)

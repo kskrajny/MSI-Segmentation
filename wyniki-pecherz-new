@@ -1,0 +1,4 @@
+conv_True - Iterative - Conv Acc: 0.644
+7 klas
+max_clusters = 12
+n_components = 6
