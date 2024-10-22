@@ -7,7 +7,10 @@ from pyspark.sql import SparkSession
 import scipy.stats
 
 if __name__ ==  '__main__':
-    for t in 'TPOLJH':
+    c = ''
+    #c = '_3'
+
+    for t in 'P':# TPOLJH':
         # ------------------------ VARIABLES TO SET  ------------------------ #
         # path_to_data = "dane/sztuczne_dane/"
         # conv_len = 5
@@ -24,7 +27,7 @@ if __name__ ==  '__main__':
         convolve = True
         # ------------------------------------------------------------------- #
 
-        name = f'parquet_convolve_{convolve}'
+        name = f'parquet_convolve_{convolve}{c}_{t}'
 
         # Lista plików numpy do wczytania
         file_list = []
@@ -32,22 +35,22 @@ if __name__ ==  '__main__':
         for n in [1, 2, 3]:
             v = f'{t}_{n}'
             file_list.append(
-                f'dane/nowe/root/filtered_intsy_{v}.npy'
+                f'dane/nowe/root/filtered_intsy{c}_{v}.npy'
             )
 
-        '''
         # Inicjalizacja sesji Spark
         spark = SparkSession.builder \
             .master("local") \
             .appName("Magisterka") \
             .config("spark.driver.memory", "15g") \
             .getOrCreate()
-        '''
-
+        print(file_list)
         # Ładowanie i łączenie danych z plików numpy
         data_list = [np.load(file, allow_pickle=True).astype(np.float32) for file in file_list]
+        for d in data_list:
+            print(d.shape)
         data = np.concatenate(data_list, axis=0)
-
+        print(data.shape)
         # Opcjonalna konwolucja
         if convolve:
             arr = scipy.stats.norm(0, 1).pdf(np.arange(-1.5, 1.5, 3 / conv_len))
@@ -63,12 +66,11 @@ if __name__ ==  '__main__':
             )
 
         # Zapisanie połączonych danych do pliku numpy
-        output_file = os.path.join(path_to_data, f'numpy_{convolve}_{t}.npy')
+        output_file = os.path.join(path_to_data, f'numpy_{convolve}{c}_{t}.npy')
         print(data.shape)
         np.save(output_file, data)
-
         print(f'Dane zapisane do pliku: {output_file}')
-        '''
+
         i = 0
         step = 100
         while i < data.shape[0]:
@@ -82,4 +84,3 @@ if __name__ ==  '__main__':
             spark.createDataFrame(arr, ['pos', 'features'])\
                 .write.parquet(path_to_data + name, mode="append")
             i += step
-        '''

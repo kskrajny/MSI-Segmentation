@@ -7,7 +7,7 @@ from code.utils import get_Acc, get_img, save_acc, get_conv_img
 from code.prepare_liver_ground_truth import process_image
 
 plt.set_cmap('jet')
-
+c = ''
 
 def evaluate(prefix, data_folder=None):
     # ------------------------ VARIABLES TO SET  ------------------------ #
@@ -49,8 +49,11 @@ def evaluate(prefix, data_folder=None):
 
     # data_folder = 'results/pecherz/pecherz_28-07-2024-23-26_conv_False_V5/'
 
-    data_folder = 'results/pecherz/pecherz_28-07-2024-21-43_conv_True/' if not data_folder else data_folder
-    t = data_folder[18]
+    # data_folder = 'results/pecherz/pecherz_28-07-2024-21-43_conv_True/' if not data_folder else data_folder
+    data_folder = 'results/nowe_dane_T_original/' if not data_folder else data_folder
+    t = data_folder[18] if not ('_3' in data_folder) else data_folder[20]
+
+    c = '_3' if '_3' in data_folder else ''
 
     dataset_name = data_folder.split('/')[1].split('_')[0]
     output_folder = data_folder + prefix + '/'
@@ -80,7 +83,7 @@ def evaluate(prefix, data_folder=None):
         file_list = []
         for n in [1, 2, 3]:
             v = f'{t}_{n}'
-            array = np.load(f'dane/{dataset_name}/root/filtered_coords_{v}.npy')
+            array = np.load(f'dane/{dataset_name}/root/filtered_coords{c}_{v}.npy')
             file_list.append(array)
             cords = np.concatenate(file_list)
             unique_cords = np.unique(cords, axis=0)
@@ -155,7 +158,7 @@ def evaluate(prefix, data_folder=None):
         for n in [1, 2, 3]:
             v = f'{t}_{n}'
             file_list.append(
-                np.load(f'dane/{dataset_name}/root/filtered_targets_3_{v}.npy')
+                np.load(f'dane/{dataset_name}/root/filtered_targets{c}_{v}.npy')
             )
         gathered_label_origin = np.concatenate(file_list).flatten()
         print(
@@ -255,5 +258,5 @@ def delete_zero_label_rows(gather_labels, gather_prediction):
     return gather_labels_filtered, gather_prediction_filtered
 
 if __name__ == '__main__':
-    for prefix in ['Iterative_K-Means', 'Normal_K-Means']:
+    for prefix in ['Normal_K-Means']:
         evaluate(prefix)

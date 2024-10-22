@@ -16,12 +16,12 @@ start = time.time()
 # - max_cluster
 # - n_components
 
-output_folders = [
+# output_folders = [
     # 'results/pecherz/pecherz_28-07-2024-21-43_conv_True/'
-    'results/pecherz/pecherz_28-07-2024-23-26_conv_False/'
-]
-max_clusters = 12
-n_components = 6
+    # 'results/pecherz/pecherz_28-07-2024-23-26_conv_False/'
+# ]
+# ax_clusters = 12
+# n_components = 6
 
 # output_folders = [
     # 'results/sztuczne_dane_26-07-2024-23-11_conv_True/',
@@ -44,7 +44,7 @@ n_components = 6
 # n_components = 3
 
 
-# output_folders = [
+output_folders = [
     # 'results/nowe_dane_all_09-09-2024-15-20_conv_True/',
     # 'results/nowe_dane_all_09-09-2024-19-08_96_conv_True/',
     # 'results/nowe_dane_all_09-09-2024-21-02_72_conv_True/',
@@ -60,10 +60,9 @@ n_components = 6
 
     #'results/nowe_dane_P_01-10-2024-12-01_128_conv_False/',
     # 'results/nowe_dane_T_01-10-2024-19-44_128_conv_True/',
-    #'results/nowe_dane_T_02-10-2024-10-13_128_conv_True/'
-# ]
-# max_clusters = 8
-# n_components = 1
+]
+max_clusters = 8
+n_components = 1
 # ------------------------------------------------------------------- #
 
 # DATA

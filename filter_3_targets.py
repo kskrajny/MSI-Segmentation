@@ -9,7 +9,7 @@ d = {
 }
 
 if __name__ == '__main__':
-    for t in 'TPOLJH':
+    for t in 'T': #'TPOLJH':
         for n in [1, 2, 3]:
             v = f'{t}_{n}'
 
