@@ -22,27 +22,14 @@ from evaluate import evaluate
 from spectral_representation import calculate_spectral_representation, visualize_spectral_selection, \
     visualize_selected_points_on_mean_spectrum
 
-#c = '_3'
-c = ''
-
-if __name__ == "__main__":
-
+def original_kmeans(v, c, path_to_data="dane/nowe/"):
     start = time.time()
-    # ------------------------ VARIABLES TO SET  ------------------------ #
-    # - path_to_data
-    # - parquet_name
-    # - output_folder
-    # - max_cluster
-    # - n_components
-
-    path_to_data = "dane/nowe/"
-    v = 'P'
-    parquet_name = f'parquet_convolve_True{c}_{v}'
+    parquet_name = f'parquet_convolve_False_{v}'
 
     # output_folder = 'results/pecherz_original_conv/'
     # output_folder = 'results/pecherz_original/'
-    # max_clusters = 32
-    # n_components = 8
+    # max_clusters = 12
+    # n_components = 6
 
     # output_folder = 'results/sztuczne_dane_original_conv/'
     # output_folder = 'results/sztuczne_dane_original/'
@@ -54,11 +41,9 @@ if __name__ == "__main__":
     # max_clusters = 3
     # n_components = 3
 
-    # output_folder = "results/nowe_dane_original_conv/"
     output_folder = f"results/nowe_dane{c}_{v}_original/"
-    max_clusters = 3
-    n_components = 3
-
+    max_clusters = 5
+    n_components = 10
 
     num_points = 128
     # ------------------------------------------------------------------- #
@@ -77,9 +62,9 @@ if __name__ == "__main__":
         .config("spark.sql.shuffle.partitions", "50") \
         .config("spark.storage.memoryFraction", "0.8") \
         .config("spark.memory.fraction", "0.8") \
-        .config("spark.driver.memory", "5g") \
-        .config("spark.executor.memory", "5g") \
-        .config("spark.driver.maxResultSize", "4g") \
+        .config("spark.driver.memory", "8g") \
+        .config("spark.executor.memory", "8g") \
+        .config("spark.driver.maxResultSize", "6g") \
         .getOrCreate()
     spark.conf.set(SparkDatasetConverter.PARENT_CACHE_DIR_URL_CONF, Path('.').absolute().as_uri())
     df = spark.read.parquet(path_to_data + parquet_name)
@@ -157,5 +142,20 @@ if __name__ == "__main__":
     '''
     spark.stop()
 
-    for prefix in [f'Normal_K-Means']:
+    for prefix in ['Normal_K-Means']:
         evaluate(prefix, output_folder)
+
+
+if __name__ == "__main__":
+    # ------------------------ VARIABLES TO SET  ------------------------ #
+    # - path_to_data
+    # - parquet_name
+    # - output_folder
+    # - max_cluster
+    # - n_components
+    for c in ['', '_3']:
+        path_to_data = "dane/nowe/"
+        #v = ''
+        #v = '_P'
+        for v in 'H':# 'TPLHOJ':
+            original_kmeans(v, c, path_to_data)

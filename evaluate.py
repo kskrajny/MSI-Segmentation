@@ -50,7 +50,7 @@ def evaluate(prefix, data_folder=None):
     # data_folder = 'results/pecherz/pecherz_28-07-2024-23-26_conv_False_V5/'
 
     # data_folder = 'results/pecherz/pecherz_28-07-2024-21-43_conv_True/' if not data_folder else data_folder
-    data_folder = 'results/nowe_dane_T_original/' if not data_folder else data_folder
+    data_folder = 'results/nowe_dane_3_H_22-10-2024-17-33_128_conv_True/' if not data_folder else data_folder
     t = data_folder[18] if not ('_3' in data_folder) else data_folder[20]
 
     c = '_3' if '_3' in data_folder else ''
