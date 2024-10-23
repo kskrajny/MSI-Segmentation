@@ -27,7 +27,7 @@ finalny wymiar redukcji 44000 -> 128:
             Pacjent L: 0.5806
             Pacjent O: 0.7075
             Pacjent P: 0.6904
-            Pacjnet T:
+            Pacjnet T: 0.552
 
     3 klasy baseline:
             Pacjent H: 0.2911
@@ -35,4 +35,4 @@ finalny wymiar redukcji 44000 -> 128:
             Pacjent L: 0.4493
             Pacjent O: 0.5828
             Pacjent P: 0.4847
-            Pacjnet T:
+            Pacjnet T: 0.1843
