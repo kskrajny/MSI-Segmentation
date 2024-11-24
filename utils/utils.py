@@ -1,7 +1,15 @@
+from enum import Enum
+
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 
+
+class DatasetName(Enum):
+    artificial = 'sztuczne'
+    bladder = 'pecherz'
+    liver = 'watroba'
+    new = 'nowe'
 
 def plot_losses(n_iterations, loss, xlabel, ylabel, title, savedir=None):
     iterations = np.linspace(1, n_iterations, n_iterations).astype(int)
@@ -94,3 +102,44 @@ def max_euclidean_distance(samples):
             max_dist = max(max_dist, dist)
 
     return max_dist
+
+
+def delete_zero_label_rows(gather_labels, gather_prediction):
+    # Find indices where labels are not equal to 0
+    non_zero_indices = np.where(gather_labels != 0)[0]
+    print(gather_prediction.shape, non_zero_indices.shape)
+    # Select only the rows from both arrays where label is non-zero
+    gather_labels_filtered = gather_labels[non_zero_indices]
+    gather_prediction_filtered = gather_prediction[non_zero_indices]
+    return gather_labels_filtered, gather_prediction_filtered
+
+
+import pygame
+import threading
+
+def playsound(file):
+    # Initialize pygame mixer
+    pygame.mixer.init()
+
+    # Load a sound file
+    sound = pygame.mixer.Sound(file)
+
+    # Play the sound
+    sound.play()
+
+    # Start a timer thread to stop the sound after 30 seconds
+    threading.Timer(30, stop_sound).start()
+
+def stop_sound():
+    # Stop all sounds
+    pygame.mixer.stop()
+
+
+'''
+im = plt.imshow(img)
+values = np.unique(img)
+colors = [im.cmap(im.norm(value)) for value in values]
+patches = [mpatches.Patch(color=colors[i], label="Level {l}".format(l=values[i])) for i in range(len(values))]
+plt.legend(handles=patches, bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+plt.show()
+'''

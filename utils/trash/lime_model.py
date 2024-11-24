@@ -1,3 +1,4 @@
+''' UNUSED
 import numpy as np
 import torch
 from torch import nn
@@ -58,3 +59,4 @@ def fit_lime(hparams, output_folder, dataloader, predictions):
             patience += 1
         print(f'Loss: {loss}')
     return model, total_losses
+'''

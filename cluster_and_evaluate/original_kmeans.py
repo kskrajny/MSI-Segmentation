@@ -22,12 +22,18 @@ from evaluate import evaluate
 from spectral_representation import calculate_spectral_representation, visualize_spectral_selection, \
     visualize_selected_points_on_mean_spectrum
 
+# Set working directory one level up
+os.chdir(os.path.abspath(os.path.join(os.getcwd(), "..")))
+print(f"Current working directory: {os.getcwd()}")
+
+
+
 def original_kmeans(v, c, path_to_data="dane/nowe/"):
     start = time.time()
     parquet_name = f'parquet_convolve_False_{v}'
 
     # output_folder = 'results/pecherz_original_conv/'
-    # output_folder = 'results/pecherz_original/'
+    # output_folder = f'results/pecherz_original_max_128_{v}/'
     # max_clusters = 12
     # n_components = 6
 
@@ -153,9 +159,9 @@ if __name__ == "__main__":
     # - output_folder
     # - max_cluster
     # - n_components
-    for c in ['', '_3']:
+    for c in ['_3']:
         path_to_data = "dane/nowe/"
         #v = ''
         #v = '_P'
-        for v in 'H':# 'TPLHOJ':
+        for v in 'T':# 'TPLHOJ':
             original_kmeans(v, c, path_to_data)

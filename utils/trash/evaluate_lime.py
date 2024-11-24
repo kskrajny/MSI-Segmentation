@@ -8,7 +8,7 @@ from petastorm.spark import SparkDatasetConverter, make_spark_converter
 from pyspark.sql import SparkSession, Window
 from torch.utils.data import DataLoader
 
-from code.lime_model import fit_lime, evaluate_model
+from utils.lime_model import fit_lime, evaluate_model
 import pyspark.sql.functions as F
 
 

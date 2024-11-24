@@ -1,3 +1,4 @@
+''' UNUSED
 import numpy as np
 import torch
 from torch import nn
@@ -153,3 +154,4 @@ def run_thru_NN(model, dataloader):
         X = next(dataloader, None)
     output = np.concatenate(output, axis=0)
     return output
+'''
