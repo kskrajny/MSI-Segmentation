@@ -1,6 +1,6 @@
 from preprocessing.bad_np_to_good_np import convert_to_good_numpy_format
 from preprocessing.bad_to_good_np_new_only import convert_to_good_numpy_format_new_only
-from preprocessing.np_to_parquet import CONFIG, process_and_save_data
+from preprocessing.convolve_and_save import CONFIG, process_and_save_data
 from utils.utils import DatasetName
 
 combine_ver = 1

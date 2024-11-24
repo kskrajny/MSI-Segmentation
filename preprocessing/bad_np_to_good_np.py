@@ -15,7 +15,7 @@ print(f"Current working directory: {os.getcwd()}")
 bad_format_intensities_files = {
     DatasetName.artificial: {
         'intsy_files': ["dane/sztuczne/root/intsy_sztuczne_magisterka.npy"],
-        'mz_files': ["dane/sztuczne/root/mz_sztuczne_magisterka.npy"]
+        'mz_files': ["dane/sztuczne/root/mz_sztuczne_magisterka.npy"],
     },
     DatasetName.bladder: {
         'intsy_files': ["dane/pecherz/root/intsy_pecherz_magisterka.npy"],

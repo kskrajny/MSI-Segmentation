@@ -1,24 +1,40 @@
-from imzml_to_numpy import cords
-
 # MSI-self-supervised-clustering
 
-TODO introduction
 
-___
-# Workflow for Developers
+## Workflow for Developers
 
-## Prepare Dataset in Good Format
+---
 
-### Datasets Used in Papers
-[Data in bad format used in resarch](https://drive.google.com/drive/u/2/folders/14cli_aVFAocVRCBk0GRllIJwUyj4OTOu) \
-[Good format](https://drive.google.com/drive/u/1/folders/1C04FcG6QzxF6dE5n4qTk0ArI1-b8Cn3H)
-(plik example_results_and_dane.zip, rozpakować i katalogi /dane oraz /resuts dodać bezpośrednio do źródłowego katalogu projektu)
+### Install Dependencies
+Python 3.10
+```bash
+pip install -r requirements.txt
+```
 
-### Custom Dataset
+---
+
+### Prepare Dataset
+
+#### Datasets Used in Papers
+Here is a link to
+[data](https://drive.google.com/drive/folders/14cli_aVFAocVRCBk0GRllIJwUyj4OTOu?usp=sharing)
+user in research.
+
+Choose from:
+- nowe (biggest)
+- pecherz
+- sztuczne (smallest)
+- watroba
+
+To run algorithm on them download into `./data/{name}/root/`
+and run [combine_preproces](preprocessing/combine_preprocess.py) with relevant parameters.
+
+#### Custom Dataset
 In case you want to use custom data, save your data in numpy format like in the example below. \
 Place them inside `dane/[custom_name]/root/` directory. \
 For real examples please see some code in [`preprocessing`](preprocessing/) 
-```python
+
+```
 import numpy as np
 
 # Coordinates of pixels in the 2d image
@@ -44,20 +60,32 @@ np.save('data/custom/root/mz.npy', mz)
 np.save('data/custom/root/intsy.npy', intensities)
 ```
 
-___
-__Workflow:__  
-1. Dodać dane do katalogu dane.
-2. Doprowadzić dane do takiej formy jaką można otrzymać w wyniki uruchomienia **bad_np_to_good_(ver).py**,
-jeśli dane są w formacie imzml, to być może **imzml_to_numpy.py** pomoże.
-3. Uruchomić **np_to_parquet.py** (w przyszłości ten krok można ominąć i przpisać kod na niekorzystanie z parquet), zapisuje on dane w innej strukturze.
-4. Obliczenia:  
-    a. uruchomić **original_kmeans.py**, aby policzyć klastry na spektrach.  
-    b. uruchomić trening sieci**.  
-    bb. uruchomić **contrastive_kmeans.py**, aby policzyć klastry na reprezentacjach spektr.  
-5. uruchomić **evaluate.py** aby policzyć wyniki, narysować obrazki.  
+After that run [convolve_and_save](preprocessing/convolve_and_save.py) on new data.
 
-** kod do treningu sieci jest na google colab: https://drive.google.com/drive/u/1/folders/1C04FcG6QzxF6dE5n4qTk0ArI1-b8Cn3H
-___
+---
 
-### Future Work:
-Zalążki XAI w **evaluate_lime.py**.
+### Encoding Algorithm
+
+To train encoder use one of notebooks provided in [notebooks](notebooks). \
+Notice that dataloader may use either numpy array or parquet as data source. \
+To train on new data set properly dimensions of a network. \
+To make it easier, here is the [script](notebooks/suggest_network_parameters.py)
+that suggest possible network parameters.
+
+---
+
+### Clustering and Evaluation
+
+To create image clusters run functions from [custer_and_evaluate](cluster_and_evaluate) directory. \
+For raw data without applying encoding algorithm use
+[original_kmeans.py](cluster_and_evaluate/original_kmeans.py). \
+For encoding algorithm results use [contrastive_kmeans.py](cluster_and_evaluate/contrastive_kmeans.py).
+
+Clustering valuation is by default performed after clustering within these scripts. \
+In case one writes custom script use [evaluate.py](cluster_and_evaluate/evaluate.py) after clustering.
+
+To analyze clusters visually you can see not only clustered images but also visualize encodings
+after applying TSNE or PCA on them. For that reason see
+[plot_features_2d.py.py](cluster_and_evaluate/plot_features_2d.py).
+
+---
