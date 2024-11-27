@@ -70,9 +70,13 @@ After that run [convolve_and_save](preprocessing/convolve_and_save.py) on new da
 
 ### Encoding Algorithm
 
-To train encoder use one of notebooks provided in [notebooks](notebooks). \
-Notice that dataloader may use either numpy array or parquet as data source. \
-To train on new data set properly dimensions of a network. \
+To train encoder use one of notebooks provided in [notebooks](notebooks).
+They are supposed to be run on Google Colab, so if you want to train locally,
+change paths to data, result directory and comment the lines that try to connect to Google Drive.
+
+Notice that dataloader may use either numpy array or parquet as data source.
+
+To train on new data set properly dimensions of a network.
 To make it easier, here is the [script](notebooks/suggest_network_parameters.py)
 that suggest possible network parameters.
 
