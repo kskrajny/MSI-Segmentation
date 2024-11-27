@@ -22,15 +22,17 @@ from evaluate import evaluate
 from spectral_representation import calculate_spectral_representation, visualize_spectral_selection, \
     visualize_selected_points_on_mean_spectrum
 
-# Set working directory one level up
-os.chdir(os.path.abspath(os.path.join(os.getcwd(), "..")))
-print(f"Current working directory: {os.getcwd()}")
+current_dir = os.getcwd()
+if not current_dir.endswith('MSI-Segmentation'):
+    os.chdir(os.path.abspath(os.path.join(current_dir, "..")))
+    print(f"Working directory changed to: {os.getcwd()}")
+else:
+    print(f"Working directory remains: {current_dir}")
 
 
-
-def original_kmeans(v, c, path_to_data="dane/nowe/"):
+def original_kmeans(postfix, path_to_data="dane/nowe/"):
     start = time.time()
-    parquet_name = f'parquet_convolve_False_{v}'
+    parquet_name = f'parquet_convolve_True{postfix}'
 
     # output_folder = 'results/pecherz_original_conv/'
     # output_folder = f'results/pecherz_original_max_128_{v}/'
@@ -47,14 +49,12 @@ def original_kmeans(v, c, path_to_data="dane/nowe/"):
     # max_clusters = 3
     # n_components = 3
 
-    output_folder = f"results/nowe_dane{c}_{v}_original/"
+    output_folder = f"results/nowe_dane{postfix}_original/"
     max_clusters = 5
     n_components = 10
 
     num_points = 128
     # ------------------------------------------------------------------- #
-
-
     # RESULT DIRECTORY
     try:
         os.mkdir(output_folder)
@@ -159,9 +159,11 @@ if __name__ == "__main__":
     # - output_folder
     # - max_cluster
     # - n_components
-    for c in ['_3']:
-        path_to_data = "dane/nowe/"
-        #v = ''
-        #v = '_P'
-        for v in 'T':# 'TPLHOJ':
-            original_kmeans(v, c, path_to_data)
+    path_to_data = "dane/nowe/"
+
+    for letter in 'PTHLOJ':
+        for version in [
+            ('', f'{letter}_1'), ('', f'{letter}_2'), ('', f'{letter}_3'),
+        ]:
+            postfix = f"{version[0]}_{version[1]}"
+            original_kmeans(postfix, path_to_data)

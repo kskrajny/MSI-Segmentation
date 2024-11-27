@@ -1,9 +1,13 @@
 import os
 import numpy as np
 
-# Set working directory one level up
-os.chdir(os.path.abspath(os.path.join(os.getcwd(), "..")))
-print(f"Current working directory: {os.getcwd()}")
+current_dir = os.getcwd()
+if not current_dir.endswith('MSI-Segmentation'):
+    os.chdir(os.path.abspath(os.path.join(current_dir, "..")))
+    print(f"Working directory changed to: {os.getcwd()}")
+else:
+    print(f"Working directory remains: {current_dir}")
+
 
 labels_dictionary = {
     'healthy_g': 1,
@@ -80,5 +84,8 @@ def convert_to_good_numpy_format_new_only(ver):
 
 
 if __name__ == '__main__':
-    version = ('_3', 'P_1')
-    convert_to_good_numpy_format_new_only(version)
+    for letter in 'PTHLJO':
+        for version in [
+            ('_3', f'{letter}_1'), ('_3', f'{letter}_2'), ('_3', f'{letter}_3'),
+        ]:
+            convert_to_good_numpy_format_new_only(version)

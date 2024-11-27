@@ -7,10 +7,12 @@ from tqdm import tqdm
 from utils.utils import DatasetName
 
 
-# Set working directory one level up
-os.chdir(os.path.abspath(os.path.join(os.getcwd(), "..")))
-print(f"Current working directory: {os.getcwd()}")
-
+current_dir = os.getcwd()
+if not current_dir.endswith('MSI-Segmentation'):
+    os.chdir(os.path.abspath(os.path.join(current_dir, "..")))
+    print(f"Working directory changed to: {os.getcwd()}")
+else:
+    print(f"Working directory remains: {current_dir}")
 
 CONFIG = {
     DatasetName.artificial: {
@@ -38,7 +40,7 @@ CONFIG = {
         "convolve": False,
     },
     DatasetName.new: {
-        "postfix": "3_T_1",
+        "postfix": "_3_T_1",
         "path_to_data": "dane/nowe/",
         "file_name": "dane/nowe/root/filtered_intsy_3_P_1.npy",
         # "file_name": "dane/nowe/root/filtered_intsy_3_T_2.npy",
@@ -53,7 +55,7 @@ CONFIG = {
         # "file_name": "dane/nowe/root/filtered_intsy_O_2.npy",
         # ....
         # options: { , _3}_{T, P, O, L, H, J}_{1, 2, 3} like for example T_2, 3_O_2
-        "save_parquet": False,
+        "save_parquet": True,
         "save_numpy": True,
         "conv_len": 10,
         "convolve": True,
@@ -96,24 +98,29 @@ def process_and_save_data(
         path_to_data: str, file_name: str, save_parquet: bool, save_numpy: bool,
         convolve: bool, conv_len: int, postfix: str = ''
     ):
-    path_to_data += postfix
+
     if not os.path.exists(f"{path_to_data}"):
         os.makedirs(f"{path_to_data}")
 
     """Process numpy files and save them as Parquet."""
-    data = np.load(file_name, allow_pickle=True).astype(np.float32)
-    if convolve:
-        data = apply_convolution(data, conv_len)
+    try:
+        data = np.load(file_name, allow_pickle=True).astype(np.float32)
+        if convolve:
+            data = apply_convolution(data, conv_len)
+    except:
+        print(f'File does not exists: {file_name} ?\nTrying from other source.')
+        numpy_path = os.path.join(path_to_data, f"numpy_convolve_{convolve}{postfix}.npy")
+        data = np.load(numpy_path)
     if save_parquet:
         spark = initialize_spark("Numpy to Parquet")
         try:
-            parquet_path = os.path.join(path_to_data, f"parquet_convolve_{convolve}")
+            parquet_path = os.path.join(path_to_data, f"parquet_convolve_{convolve}{postfix}")
             save_to_parquet(spark, data, parquet_path)
             print(f"Data successfully saved to {parquet_path}")
         finally:
             spark.stop()
     if save_numpy:
-        numpy_path = os.path.join(path_to_data, f"numpy_convolve_{convolve}")
+        numpy_path = os.path.join(path_to_data, f"numpy_convolve_{convolve}{postfix}")
         np.save(numpy_path, data)
         print(f"Data successfully saved to {numpy_path}")
 

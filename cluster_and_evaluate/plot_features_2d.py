@@ -3,10 +3,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-# Set working directory one level up
-os.chdir(os.path.abspath(os.path.join(os.getcwd(), "..")))
-print(f"Current working directory: {os.getcwd()}")
-
+current_dir = os.getcwd()
+if not current_dir.endswith('MSI-Segmentation'):
+    os.chdir(os.path.abspath(os.path.join(current_dir, "..")))
+    print(f"Working directory changed to: {os.getcwd()}")
+else:
+    print(f"Working directory remains: {current_dir}")
 
 if __name__ == "__main__":
     output_folder = 'results/pecherz_original_max128'

@@ -27,7 +27,11 @@ Choose from:
 - watroba
 
 To run algorithm on them download into `./data/{name}/root/`
-and run [combine_preproces](preprocessing/combine_preprocess.py) with relevant parameters.
+and run [combine_preprocess](preprocessing/combine_preprocess.py) with relevant parameters.
+
+NOTICE: Before running this check if you need parquet or just numpy. \
+For small datasets use numpy, for big ones use parquet. \
+Numpy is preferable, but some notebooks are using parquet.
 
 #### Custom Dataset
 In case you want to use custom data, save your data in numpy format like in the example below. \

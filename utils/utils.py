@@ -42,6 +42,7 @@ def get_Acc(test_labels, gt_labels):
         # 3. compute acc in this group
         values, counts = np.unique(gt_label, return_counts=True)
         pr = np.divide(counts, [len(gt_labels[gt_labels == v]) for v in values])
+        #pr = counts
         maj_vote = values[np.argmax(pr)]
         n_vote = np.sum(gt_label == maj_vote)
         acc = n_vote/gt_label.shape[0]
@@ -72,9 +73,9 @@ def get_img(cords, label):
     return img
 
 
-def save_acc(name, acc, output_folder, mode):
+def save_acc(name, acc, output_folder, mode, c=''):
     print(f'{name}: {acc}')
-    with open(output_folder + 'accs', mode) as convert_file:
+    with open(output_folder + f'accs{c}', mode) as convert_file:
         convert_file.write(f'{name}: {acc}\n')
 
 
@@ -107,7 +108,7 @@ def max_euclidean_distance(samples):
 def delete_zero_label_rows(gather_labels, gather_prediction):
     # Find indices where labels are not equal to 0
     non_zero_indices = np.where(gather_labels != 0)[0]
-    print(gather_prediction.shape, non_zero_indices.shape)
+    # print(gather_prediction.shape, non_zero_indices.shape)
     # Select only the rows from both arrays where label is non-zero
     gather_labels_filtered = gather_labels[non_zero_indices]
     gather_prediction_filtered = gather_prediction[non_zero_indices]

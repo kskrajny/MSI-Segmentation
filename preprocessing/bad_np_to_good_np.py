@@ -7,10 +7,12 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 from utils.utils import DatasetName
 
-# Set working directory one level up
-os.chdir(os.path.abspath(os.path.join(os.getcwd(), "..")))
-print(f"Current working directory: {os.getcwd()}")
-
+current_dir = os.getcwd()
+if not current_dir.endswith('MSI-Segmentation'):
+    os.chdir(os.path.abspath(os.path.join(current_dir, "..")))
+    print(f"Working directory changed to: {os.getcwd()}")
+else:
+    print(f"Working directory remains: {current_dir}")
 
 bad_format_intensities_files = {
     DatasetName.artificial: {

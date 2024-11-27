@@ -9,61 +9,12 @@ from evaluate import evaluate
 from utils.utils import DatasetName
 
 
-# Set working directory one level up
-os.chdir(os.path.abspath(os.path.join(os.getcwd(), "..")))
-print(f"Current working directory: {os.getcwd()}")
-
-
-def get_subdirectories(search_directory = 'results/', pattern = '128'):
-    # Check if the directory exists
-    if os.path.exists(search_directory):
-        # Get a list of all directories within the search directory
-        subdirectories = [subdir for subdir in os.listdir(search_directory)
-                          if os.path.isdir(os.path.join(search_directory, subdir))]
-
-        # Filter directories that contain '128' in their name
-        filtered_subdirectories = [str(os.path.join(search_directory, subdir)) + '/'
-                                   for subdir in subdirectories if pattern in subdir]
-        return filtered_subdirectories
-    else:
-        print(f"Directory {search_directory} does not exist.")
-        return []
-
-
-CONFIG = {
-    DatasetName.bladder: {
-        "output_folders": [
-            'results/pecherz/pecherz_28-07-2024-21-43_conv_True/'
-            # 'results/pecherz/pecherz_28-07-2024-23-26_conv_False/'
-        ],
-        "max_clusters": 12,
-        "n_components": 6
-    },
-    DatasetName.artificial: {
-        "output_folders": [
-            'results/sztuczne_dane_26-07-2024-23-11_conv_True/',
-            # 'results/sztuczne_dane_28-07-2024-22-06_conv_False/'
-        ],
-        "max_clusters": 6,
-        "n_components": 3
-    },
-    DatasetName.liver: {
-        "output_folders": [
-            'results/watroba_28-07-2024-21-45_conv_False/',
-            # 'results/watroba_28-07-2024-23-19_conv_True/',
-            # 'results/watroba_29-07-2024-20-45_conv_False/',
-            # 'results/watroba_29-07-2024-17-39_conv_True/'
-        ],
-        "max_clusters": 3,
-        "n_components": 3
-    },
-    DatasetName.new: {
-        # "output_folders": ["results/nowe_dane_3_J_23-10-2024-01-47_128_conv_True/"],
-        "output_folders": get_subdirectories(),
-        "max_clusters": 5,
-        "n_components": 10
-    }
-}
+current_dir = os.getcwd()
+if not current_dir.endswith('MSI-Segmentation'):
+    os.chdir(os.path.abspath(os.path.join(current_dir, "..")))
+    print(f"Working directory changed to: {os.getcwd()}")
+else:
+    print(f"Working directory remains: {current_dir}")
 
 
 def contrastive_kmeans(output_folders, max_clusters, n_components, do_iter=False):
@@ -134,10 +85,62 @@ def contrastive_kmeans(output_folders, max_clusters, n_components, do_iter=False
             evaluate(prefix, output_folder)
 
 
+def get_subdirectories(search_directory = 'results/', pattern = 'conv'):
+    # Check if the directory exists
+    if os.path.exists(search_directory):
+        # Get a list of all directories within the search directory
+        subdirectories = [subdir for subdir in os.listdir(search_directory)
+                          if os.path.isdir(os.path.join(search_directory, subdir))]
+
+        # Filter directories that contain '128' in their name
+        filtered_subdirectories = [str(os.path.join(search_directory, subdir)) + '/'
+                                   for subdir in subdirectories
+                                   if pattern in subdir and 'original' not in subdir
+                                   and 'True' in subdir]
+        return filtered_subdirectories
+    else:
+        print(f"Directory {search_directory} does not exist.")
+        return []
+
+
+CONFIG = {
+    DatasetName.bladder: {
+        "output_folders": [
+            'results/pecherz/pecherz_28-07-2024-21-43_conv_True/'
+            # 'results/pecherz/pecherz_28-07-2024-23-26_conv_False/'
+        ],
+        "max_clusters": 12,
+        "n_components": 6
+    },
+    DatasetName.artificial: {
+        "output_folders": [
+            'results/sztuczne_dane_26-07-2024-23-11_conv_True/',
+            # 'results/sztuczne_dane_28-07-2024-22-06_conv_False/'
+        ],
+        "max_clusters": 6,
+        "n_components": 3
+    },
+    DatasetName.liver: {
+        "output_folders": [
+            'results/watroba_28-07-2024-21-45_conv_False/',
+            # 'results/watroba_28-07-2024-23-19_conv_True/',
+            # 'results/watroba_29-07-2024-20-45_conv_False/',
+            # 'results/watroba_29-07-2024-17-39_conv_True/'
+        ],
+        "max_clusters": 3,
+        "n_components": 3
+    },
+    DatasetName.new: {
+        # "output_folders": ["results/nowe_dane_3_J_23-10-2024-01-47_128_conv_True/"],
+        "output_folders": get_subdirectories(),
+        "max_clusters": 5,
+        "n_components": 10
+    }
+}
 
 if __name__ == '__main__':
     # config = CONFIG[DatasetName.artificial]
-    config = CONFIG[DatasetName.bladder]
+    # config = CONFIG[DatasetName.bladder]
     # config = CONFIG[DatasetName.liver]
-    # config = CONFIG[DatasetName.new]
+    config = CONFIG[DatasetName.new]
     contrastive_kmeans(**config)

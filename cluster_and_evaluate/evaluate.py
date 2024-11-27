@@ -10,10 +10,12 @@ from sklearn.cluster import KMeans
 
 plt.set_cmap('jet')
 
-# Set working directory one level up
-os.chdir(os.path.abspath(os.path.join(os.getcwd(), "..")))
-print(f"Current working directory: {os.getcwd()}")
-
+current_dir = os.getcwd()
+if not current_dir.endswith('MSI-Segmentation'):
+    os.chdir(os.path.abspath(os.path.join(current_dir, "..")))
+    print(f"Working directory changed to: {os.getcwd()}")
+else:
+    print(f"Working directory remains: {current_dir}")
 
 # data_folder = 'results/pecherz_08-11-2023-18-29_conv_False/'
 # data_folder = 'results/pecherz_28-07-2024-21-43_conv_True/'
@@ -32,18 +34,20 @@ print(f"Current working directory: {os.getcwd()}")
 data_folder = 'results/pecherz_original/'
 
 
-def evaluate(prefix, data_folder):
+def evaluate(prefix, data_folder, c=""):
     # ------------------------------------------------------------------- #
     # PREPARE PARAMETERS AND RESULT DIRECTORY
 
-    t = data_folder[18] if not ('_3' in data_folder) else data_folder[20]
-    c = '_3' if '_3' in data_folder else ''
+    t = data_folder[18] if not (c == '_3') else data_folder[20]
+    n = data_folder[20] if not (c == '_3') else data_folder[22]
 
     dataset_name = data_folder.split('/')[1].split('_')[0]
     output_folder = data_folder + prefix + '/'
 
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
+
+    print(f'NOW EVALUATE {output_folder}')
 
     # ------------------------------------------------------------------- #
     # READ PREDICTIONS
@@ -65,12 +69,8 @@ def evaluate(prefix, data_folder):
     # READ COORDINATES
 
     if dataset_name == 'nowe':
-        file_list = []
-        for n in [1, 2, 3]:
-            v = f'{t}_{n}'
-            array = np.load(f'dane/{dataset_name}/root/filtered_coords{c}_{v}.npy')
-            file_list.append(array)
-        cords = np.concatenate(file_list)
+        v = f'{t}_{n}'
+        cords = np.load(f'dane/{dataset_name}/root/filtered_coords{c}_{v}.npy')
         unique_cords = np.unique(cords, axis=0)
         min_x = np.min(cords[:, 0])
         min_y = np.min(cords[:, 1])
@@ -113,13 +113,8 @@ def evaluate(prefix, data_folder):
         cords[:, 0] = 161 - cords[:, 0] - 1
 
     elif dataset_name == 'nowe':
-        file_list = []
-        for n in [1, 2, 3]:
-            v = f'{t}_{n}'
-            file_list.append(
-                np.load(f'dane/{dataset_name}/root/filtered_targets{c}_{v}.npy')
-            )
-        gathered_label_origin = np.concatenate(file_list).flatten()
+        v = f'{t}_{n}'
+        gathered_label_origin = np.load(f'dane/{dataset_name}/root/filtered_targets{c}_{v}.npy')
         gathered_label, gathered_predictions = delete_zero_label_rows(gathered_label_origin, gathered_predictions)
 
 
@@ -134,9 +129,9 @@ def evaluate(prefix, data_folder):
     # PLOT GROUND TRUTH
 
     img = get_img(cords, gathered_label)
-    np.save(output_folder + "target", img)
+    np.save(output_folder + f"target{c}", img)
     plt.imshow(img)
-    plt.savefig(output_folder + 'true_seg')
+    plt.savefig(output_folder + f'true_seg{c}')
 
 
     # ------------------------------------------------------------------- #
@@ -144,12 +139,12 @@ def evaluate(prefix, data_folder):
 
     alg_img = get_img(cords, gathered_predictions)
     plt.imshow(alg_img)
-    plt.savefig(output_folder + 'alg_seg')
+    plt.savefig(output_folder + f'alg_seg{c}')
 
     img_matched = get_img(cords, gathered_predictions_matched)
-    np.save(output_folder + "alg", img_matched)
+    np.save(output_folder + f"alg{c}", img_matched)
     plt.imshow(img_matched)
-    plt.savefig(output_folder + 'alg_seg_match')
+    plt.savefig(output_folder + f'alg_seg_match{c}')
 
 
     # ------------------------------------------------------------------- #
@@ -157,11 +152,11 @@ def evaluate(prefix, data_folder):
 
     conv_alg_img = get_conv_img(alg_img)
     plt.imshow(conv_alg_img)
-    plt.savefig(output_folder + 'conv_alg_seg')
+    plt.savefig(output_folder + f'conv_alg_seg{c}')
 
     conv_alg_predictions = []
-    for c in cords:
-        conv_alg_predictions.append(conv_alg_img[c[0], c[1]])
+    for c_ in cords:
+        conv_alg_predictions.append(conv_alg_img[c_[0], c_[1]])
 
     if dataset_name == 'nowe':
         conv_gathered_label, conv_alg_predictions = delete_zero_label_rows(gathered_label_origin, np.array(conv_alg_predictions))
@@ -170,20 +165,20 @@ def evaluate(prefix, data_folder):
     conv_predictions_matched = np.array(list(map(lambda x: info_conv[info_conv.label == x].gt_group, conv_alg_predictions)))
 
     conv_img_matched = get_img(cords, conv_predictions_matched)
-    np.save(output_folder + "alg_conv", conv_img_matched)
+    np.save(output_folder + f"alg_conv{c}", conv_img_matched)
     plt.imshow(conv_img_matched)
-    plt.savefig(output_folder + 'conv_seg_matched')
+    plt.savefig(output_folder + f'conv_seg_matched{c}')
 
 
     # ------------------------------------------------------------------- #
     # SAVE NON-IMAGE RESULTS
 
-    save_acc('Acc', acc, output_folder, 'w')
-    save_acc('Conv Acc', acc_conv, output_folder, 'a')
+    save_acc('Acc', acc, output_folder, 'w', c)
+    save_acc('Conv Acc', acc_conv, output_folder, 'a', c)
 
-    np.savetxt(output_folder + "ground_truth.csv", gathered_label, delimiter=",", fmt="%d")
-    np.savetxt(output_folder + "prediction.csv", gathered_predictions, delimiter=",", fmt="%d")
-    np.savetxt(output_folder + "matched.csv", gathered_predictions_matched, delimiter=",", fmt="%d")
+    np.savetxt(output_folder + f"ground_truth{c}.csv", gathered_label, delimiter=",", fmt="%d")
+    np.savetxt(output_folder + f"prediction{c}.csv", gathered_predictions, delimiter=",", fmt="%d")
+    np.savetxt(output_folder + f"matched{c}.csv", gathered_predictions_matched, delimiter=",", fmt="%d")
 
 
 

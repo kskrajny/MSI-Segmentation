@@ -1,7 +1,0 @@
-conv_True - Iterative - Conv Acc: 0.644
-conv_True - Normal Kmeans - Conv Acc: 0.5901
-7 klas
-max_clusters = 12
-n_components (PCA) = 6
-
-Baseline: 0.4128
