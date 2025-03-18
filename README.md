@@ -20,7 +20,7 @@ In this section, we describe how to reproduce the results published in *Efficien
   
 All the data sets can be found on our Google drive under [this link](https://drive.google.com/drive/folders/14cli_aVFAocVRCBk0GRllIJwUyj4OTOu?usp=sharing). 
 
-To analyze any of these data sets, download the respective data set into `./data/{name}/root/`, where `.` refers to the directory of this repository and `{name}` refers to the name of the dataset.  
+To analyze any of these data sets, download the respective data set into `./data/{name}/root/`, where `.` refers to the directory in which this repository has been downloaded, and `{name}` refers to the name of the dataset.  
 
 ### Data pre-processing 
 To preprocess a data set, run the `combine_preprocess.py` script found in the `preprocessing` subdirectory (you can follow [this link](https://github.com/kskrajny/MSI-Segmentation/blob/master/preprocessing/combine_preprocess.py) to access the script directly). 
